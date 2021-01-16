@@ -49,6 +49,7 @@ export const updateProducts = (products) => ({
     products: [...cart],
   });
   
-  export const toggleCart = () => ({
+  export const toggleCart = (cart) => ({
     type: TOGGLE_CART,
+    cart,
   });

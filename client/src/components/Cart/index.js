@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
 import { addMultipleToCart, toggleCart } from "../../utils/actions";
 import { idbPromise } from "../../utils/helpers";
 import CartItem from "../CartItem";
@@ -14,10 +14,10 @@ const stripePromise = loadStripe("pk_test_TYooMQauvdEDq54NiTphI7jx");
 const Cart = () => {
   const [getCheckout, { data }] = useLazyQuery(QUERY_CHECKOUT);
   const dispatch = useDispatch();
-  const { cart, cartOpen } = useSelector(state => ({
+  const { cart, cartOpen } = useSelector((state) => ({
     cart: state.cart,
-    cartOpen: state.cartOpen
-  }))
+    cartOpen: state.cartOpen,
+  }));
 
   useEffect(() => {
     async function getCart() {
@@ -38,12 +38,13 @@ const Cart = () => {
     }
   }, [data]);
 
-  // function toggleCart() {
-  //   store.dispatch({ type: toggleCart });
-  // }
+  function handleToggleCart() {
+    dispatch(toggleCart());
+  }
+
   if (!cartOpen) {
     return (
-      <div className="cart-closed" onClick={toggleCart}>
+      <div className="cart-closed" onClick={handleToggleCart}>
         <span role="img" aria-label="trash">
           🛒
         </span>
@@ -74,7 +75,7 @@ const Cart = () => {
 
   return (
     <div className="cart">
-      <div className="close" onClick={toggleCart}>
+      <div className="close" onClick={handleToggleCart}>
         [close]
       </div>
       <h2>Shopping Cart</h2>
@@ -104,4 +105,4 @@ const Cart = () => {
   );
 };
 
-export default Cart
+export default Cart;

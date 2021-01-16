@@ -2,7 +2,6 @@ const { AuthenticationError } = require("apollo-server-express");
 const { User, Product, Category, Order } = require("../models");
 const { signToken } = require("../utils/auth");
 const stripe = require("stripe")("sk_test_4eC39HqLyjWDarjtT1zdp7dc");
-// We're using another test key copied from the Stripe documentation. Because it's only a test key, it's fine to include it directly in the JavaScript file. Once you create a real Stripe account, however, you would want to replace this with an environment variable (e.g., process.env.STRIPE_KEY).
 
 const resolvers = {
   Query: {
@@ -92,8 +91,6 @@ const resolvers = {
         mode: "payment",
         success_url: `${url}/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${url}/`,
-        // success_url: 'https://example.com/success?session_id={CHECKOUT_SESSION_ID}',
-        // cancel_url: 'https://example.com/cancel'
       });
 
       return { session: session.id };

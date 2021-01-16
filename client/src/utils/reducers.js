@@ -65,7 +65,7 @@ export const reducer = (state = initialState, action) => {
         cartOpen: true,
         cart: state.cart.map((product) => {
           if (action._id === product._id) {
-            product.purchaseQuantity = action.purchaseQuantity;
+            return { ...product, purchaseQuantity: action.purchaseQuantity };
           }
           return product;
           // Why did we need to use the map() method to create a new array instead of updating state.cart directly?

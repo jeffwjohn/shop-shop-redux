@@ -2,43 +2,30 @@ import React from "react";
 import { idbPromise } from "../../utils/helpers";
 import { Link } from "react-router-dom";
 import { pluralize } from "../../utils/helpers";
-import store from '../../utils/store'
-import { ADD_TO_CART, UPDATE_CART_QUANTITY } from "../../utils/actions";
+import { addToCart, updateCartQuantity } from "../../utils/actions";
+import { useDispatch, useSelector } from "react-redux";
 
-function ProductItem(item) {
-  const [state, dispatch] = store;
+function ProductItem({ item }) {
+  const { _id, name, image, price, quantity } = item;
 
-  const { image, name, _id, price, quantity } = item;
+  const dispatch = useDispatch();
+  const cart = useSelector((state) => state.cart);
 
-  // const addToCart = () => {
-  //   dispatch({
-  //     type: ADD_TO_CART,
-  //     product: { ...item, purchaseQuantity: 1 }
-  //   });
-  // };
-
-  const { cart } = state;
-
-  const addToCart = () => {
+  const handleAddToCart = () => {
     // find the cart item with the matching id
     const itemInCart = cart.find((cartItem) => cartItem._id === _id);
 
     // if there was a match, call UPDATE with a new purchase quantity
     if (itemInCart) {
-      dispatch({
-        type: UPDATE_CART_QUANTITY,
-        _id: _id,
-        purchaseQuantity: parseInt(itemInCart.purchaseQuantity) + 1,
-      });
+      dispatch(
+        updateCartQuantity(_id, parseInt(itemInCart.purchaseQuantity) + 1)
+      );
       idbPromise("cart", "put", {
         ...itemInCart,
         purchaseQuantity: parseInt(itemInCart.purchaseQuantity) + 1,
       });
     } else {
-      dispatch({
-        type: ADD_TO_CART,
-        product: { ...item, purchaseQuantity: 1 },
-      });
+      dispatch(addToCart(item));
       idbPromise("cart", "put", { ...item, purchaseQuantity: 1 });
     }
   };
@@ -55,7 +42,7 @@ function ProductItem(item) {
         </div>
         <span>${price}</span>
       </div>
-      <button onClick={addToCart}>Add to cart</button>
+      <button onClick={handleAddToCart}>Add to cart</button>
     </div>
   );
 }

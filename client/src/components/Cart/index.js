@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from 'react-redux';
 import { addMultipleToCart, toggleCart } from "../../utils/actions";
 import { idbPromise } from "../../utils/helpers";
 import CartItem from "../CartItem";
@@ -11,19 +11,24 @@ import { useLazyQuery } from "@apollo/react-hooks";
 
 const stripePromise = loadStripe("pk_test_TYooMQauvdEDq54NiTphI7jx");
 
-const Cart = ({ cart, cartOpen, addMultipleToCart, toggleCart }) => {
+const Cart = () => {
   const [getCheckout, { data }] = useLazyQuery(QUERY_CHECKOUT);
+  const dispatch = useDispatch();
+  const { cart, cartOpen } = useSelector(state => ({
+    cart: state.cart,
+    cartOpen: state.cartOpen
+  }))
 
   useEffect(() => {
     async function getCart() {
       const cart = await idbPromise("cart", "get");
-      addMultipleToCart(cart);
+      dispatch(addMultipleToCart(cart));
     }
 
     if (!cart.length) {
       getCart();
     }
-  }, [cart.length, addMultipleToCart]);
+  }, [cart.length, dispatch]);
 
   useEffect(() => {
     if (data) {
@@ -99,13 +104,4 @@ const Cart = ({ cart, cartOpen, addMultipleToCart, toggleCart }) => {
   );
 };
 
-export default connect(
-  (state) => ({
-    cart: state.cart,
-    cartOpen: state.cartOpen,
-  }),
-  {
-    addMultipleToCart,
-    toggleCart,
-  }
-)(Cart);
+export default Cart

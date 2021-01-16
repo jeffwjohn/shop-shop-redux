@@ -1,17 +1,10 @@
-// import { createStore } from 'redux';
-// import reducer from './reducers';
+import { configureStore } from '@reduxjs/toolkit';
+import reducer from './reducers';
 
-// const store = createStore(reducer);
+const store = configureStore({
+    reducer
+},
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+);
 
-// export default store
-
-// let preloadedState
-// const persistedTodosString = localStorage.getItem('todos')
-
-// if (persistedTodosString) {
-//   preloadedState = {
-//     todos: JSON.parse(persistedTodosString)
-//   }
-// }
-
-// const store = createStore(rootReducer, preloadedState)
+export default store;

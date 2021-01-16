@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { idbPromise } from "../utils/helpers";
-import { useStoreContext } from "../utils/GlobalState";
+// import { useStoreContext } from "../utils/GlobalState";
+import { Provider } from 'react-redux';
+import store from '../utils/store'
 import {
   REMOVE_FROM_CART,
   UPDATE_CART_QUANTITY,
@@ -28,7 +30,7 @@ function Detail() {
   //     setCurrentProduct(products.find(product => product._id === id));
   //   }
   // }, [products, id]);
-  const [state, dispatch] = useStoreContext();
+  const [state, dispatch] = store;
   const { id } = useParams();
 
   const [currentProduct, setCurrentProduct] = useState({});

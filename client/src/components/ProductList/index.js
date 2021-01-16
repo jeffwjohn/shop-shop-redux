@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { idbPromise } from "../../utils/helpers";
-import { useStoreContext } from '../../utils/GlobalState';
+// import { useStoreContext } from '../../utils/GlobalState';
+import { Provider } from 'react-redux';
+import store from '../../utils/store'
 import { UPDATE_PRODUCTS } from '../../utils/actions';
 import { useQuery } from '@apollo/react-hooks';
 
@@ -23,17 +25,23 @@ function ProductList() {
 
 //     return products.filter(product => product.category._id === currentCategory);
 //   }
-const [state, dispatch] = useStoreContext();
+
+console.log('Initial state: ', store.getState())
+
+// const [state, dispatch] = store.getState();
+const state = store.getState();
 
 const { currentCategory } = state;
 
 const { loading, data } = useQuery(QUERY_PRODUCTS);
 
+// store.dispatch({type: UPDATE_PRODUCTS, payload: data.products})
+
 useEffect(() => {
   // if there's data to be stored
   if (data) {
     // let's store it in the global state object
-    dispatch({
+    store.dispatch({
       type: UPDATE_PRODUCTS,
       products: data.products
     });
@@ -47,13 +55,13 @@ useEffect(() => {
       // since we're offline, get all of the data from the `products` store
       idbPromise('products', 'get').then((products) => {
         // use retrieved data to set global state for offline browsing
-        dispatch({
+        store.dispatch({
           type: UPDATE_PRODUCTS,
           products: products
         });
       });
     }
-  }, [data, loading, dispatch]);
+  }, [data, loading, store.dispatch]);
 
 function filterProducts() {
   if (!currentCategory) {

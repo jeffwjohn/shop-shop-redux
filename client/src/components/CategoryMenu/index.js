@@ -1,7 +1,9 @@
 import React, { useEffect } from "react";
 import { idbPromise } from "../../utils/helpers";
 import { useQuery } from "@apollo/react-hooks";
-import { useStoreContext } from "../../utils/GlobalState";
+// import { useStoreContext } from "../../utils/GlobalState";
+import { Provider } from 'react-redux';
+import store from '../../utils/store'
 import {
   UPDATE_CATEGORIES,
   UPDATE_CURRENT_CATEGORY,
@@ -13,17 +15,19 @@ function CategoryMenu() {
   //   const { data: categoryData } = useQuery(QUERY_CATEGORIES);
   //   const categories = categoryData?.categories || [];
 
-  const [state, dispatch] = useStoreContext();
+  const state = store.getState();
 
   const { categories } = state;
   //Now when we use this component, we immediately call upon the useStoreContext() Hook to retrieve the current state from the global state object and the dispatch() method to update state. Because we only need the categories array out of our global state, we simply destructure it out of state so we can use it to provide to our returning JSX.
   const { loading, data: categoryData } = useQuery(QUERY_CATEGORIES);
 
+  // store.dispatch({type: UPDATE_CATEGORIES, payload: categoryData.categories})
+
   useEffect(() => {
     // if categoryData exists or has changed from the response of useQuery, then run dispatch()
     if (categoryData) {
       // execute our dispatch function with our action object indicating the type of action and the data to set our state for categories to
-      dispatch({
+      store.dispatch({
         type: UPDATE_CATEGORIES,
         categories: categoryData.categories,
       });
@@ -32,13 +36,13 @@ function CategoryMenu() {
       });
     } else if (!loading) {
       idbPromise("categories", "get").then((categories) => {
-        dispatch({
+        store.dispatch({
           type: UPDATE_CATEGORIES,
           categories: categories,
         });
       });
     }
-  }, [categoryData, loading, dispatch]);
+  }, [categoryData, loading, store.dispatch]);
 
   // Now when this component loads and the response from the useQuery() Hook returns, the useEffect() Hook notices that categoryData is not undefined anymore and runs the dispatch() function, setting our category data to the global state!
 
@@ -47,7 +51,7 @@ function CategoryMenu() {
   // But the beauty of the useEffect() Hook is that it not only runs on component load, but also when some form of state changes in that component. So when useQuery() finishes, and we have data in categoryData, the useEffect() Hook runs again and notices that categoryData exists! Because of that, it does its job and executes the dispatch() function.
 
   const handleClick = (id) => {
-    dispatch({
+    store.dispatch({
       type: UPDATE_CURRENT_CATEGORY,
       currentCategory: id,
     });

@@ -3,7 +3,9 @@ import { TOGGLE_CART, ADD_MULTIPLE_TO_CART } from "../../utils/actions";
 import { idbPromise } from "../../utils/helpers";
 import CartItem from "../CartItem";
 import Auth from "../../utils/auth";
-import { useStoreContext } from "../../utils/GlobalState";
+// import { useStoreContext } from "../../utils/GlobalState";
+import { Provider } from 'react-redux';
+import store from '../../utils/store'
 import "./style.css";
 import { QUERY_CHECKOUT } from "../../utils/queries";
 import { loadStripe } from "@stripe/stripe-js";
@@ -12,19 +14,21 @@ import { useLazyQuery } from '@apollo/react-hooks';
 const stripePromise = loadStripe("pk_test_TYooMQauvdEDq54NiTphI7jx");
 
 const Cart = () => {
-  const [state, dispatch] = useStoreContext();
+  // const [state, dispatch] = store;
   const [getCheckout, { data }] = useLazyQuery(QUERY_CHECKOUT);
+
+const state = store.getState();
 
   useEffect(() => {
     async function getCart() {
       const cart = await idbPromise("cart", "get");
-      dispatch({ type: ADD_MULTIPLE_TO_CART, products: [...cart] });
+      store.dispatch({ type: ADD_MULTIPLE_TO_CART, products: [...cart] });
     }
 
     if (!state.cart.length) {
       getCart();
     }
-  }, [state.cart.length, dispatch]);
+  }, [state.cart.length, store.dispatch]);
   // You may wonder what happens if there's nothing to retrieve from the cached object store and state.cart.length is still 0. Does this useEffect() function just continuously run because of that? Well, it could very easily do that if we neglect to pass the state.cart.length value into useEffect()'s dependency array. That's the whole point of the dependency array. We list all of the data that this useEffect() Hook is dependent on to execute. The Hook runs on load no matter what, but then it only runs again if any value in the dependency array has changed since the last time it ran.
   useEffect(() => {
     if (data) {
@@ -36,7 +40,7 @@ const Cart = () => {
   // The Stripe documentation warns that you shouldn't rely on the success_url alone for fulfilling purchases. Malicious users could visit /success directly without paying for anything, or users might close the browser tab before Stripe is able to redirect to your website. Implementing a more robust solution is beyond the scope of this lesson, but it's worth reading over Stripe's documentation on confirming a successful payment to see what else is possible.
 
   function toggleCart() {
-    dispatch({ type: TOGGLE_CART });
+    store.dispatch({ type: TOGGLE_CART });
   }
   if (!state.cartOpen) {
     return (

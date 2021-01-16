@@ -2,8 +2,6 @@ import React from "react";
 import { idbPromise } from "../../utils/helpers";
 import { Link } from "react-router-dom";
 import { pluralize } from "../../utils/helpers";
-// import { useStoreContext } from "../../utils/GlobalState";
-import { Provider } from 'react-redux';
 import store from '../../utils/store'
 import { ADD_TO_CART, UPDATE_CART_QUANTITY } from "../../utils/actions";
 
